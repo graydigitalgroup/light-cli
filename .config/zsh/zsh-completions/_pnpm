@@ -1,0 +1,97 @@
+#compdef pnpm
+# ------------------------------------------------------------------------------
+# Copyright (c) 2021 Github zsh-users - http://github.com/zsh-users
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of the zsh-users nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL ZSH-USERS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# ------------------------------------------------------------------------------
+# Description
+# -----------
+#
+#  Completion script for pnpm (https://github.com/pnpm/pnpm).
+#  Version pnpm v6.14.7
+#
+# ------------------------------------------------------------------------------
+# Authors
+# -------
+#
+#  * Blake Cerecero (https://github.com/Blake-C)
+#
+# ------------------------------------------------------------------------------
+
+_pnpm() {
+  local curcontext='$curcontext' state line cmds ret=1
+  integer NORMARG
+  typeset -A opt_args
+
+  global_args=('-h' '--help' '-v' '--version')
+
+  _arguments -C \
+    '(- *)'{-v,--version}'[Show pnpm version.]' \
+    '(- *)'{-h,--help}'[Show help guide.]' \
+    '1: :->cmds' \
+    '*::arg:->args' \
+  && ret=0
+
+case $state in
+  cmds)
+    _values 'pnpm command' \
+      '(install-test)'{it,install-test}'[Runs a pnpm install followed immediately by a pnpm test]' \
+      '(install)'{i,install}'[Install all dependencies for a project]' \
+      '(link)'{ln,link}'[Connect the local project to another one]' \
+      '(list)'{ls,list}'[Print all the versions of packages that are installed, as well as their dependencies, in a tree-structure]' \
+      '(rebuild)'{rb,rebuild}'[Rebuild a package]' \
+      '(remove)'{rm,remove}'[Removes packages from node_modules and from the projects package.json]' \
+      '(test)'{t,test}'[Runs a packages "test" script, if one was provided]' \
+      '(update)'{up,update}'[Updates packages to their latest version based on the specified range]' \
+      'add[Installs a package and any packages that it depends on. By default, any new package is installed as a prod dependency]' \
+      'audit[Checks for known security issues with the installed packages]' \
+      'exec[Executes a shell command in scope of a project]' \
+      'import[Generates a pnpm-lock.yaml from an npm package-lock.json (or npm-shrinkwrap.json) file]' \
+      'outdated[Check for outdated packages]' \
+      'pack[Create a tarball from a package]' \
+      'prune[Removes extraneous packages]' \
+      'publish[Publishes a package to the registry]' \
+      'root[Print the effective `node_modules` directory.]' \
+      'run[Runs a defined package script]' \
+      'start[Runs an arbitrary command specified in the packages "start" property of its "scripts" object]' \
+      'store[add|prune|status]' \
+      'unlink[Unlinks a package. Like yarn unlink but pnpm re-installs the dependency after removing the external link]' \
+  && ret=0
+    ;;
+  args)
+    case $line[1] in
+      (store)
+        _values 'options' \
+          'add[Adds new packages to the pnpm store directly. Does not modify any projects or files outside the store]' \
+          'prune[Removes unreferenced (extraneous, orphan) packages from the store]' \
+          'status[Checks for modified packages in the store]' \
+        && ret=0
+        compadd -a global_args
+      ;;
+    esac
+    ;;
+esac
+}
+
+_pnpm "$@"

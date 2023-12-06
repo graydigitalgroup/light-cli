@@ -1,0 +1,172 @@
+#compdef nvm
+# ------------------------------------------------------------------------------
+# Copyright (c) 2021 Github zsh-users - http://github.com/zsh-users
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of the zsh-users nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL ZSH-USERS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# ------------------------------------------------------------------------------
+# Description
+# -----------
+#
+#  Completion script for nvm (https://github.com/nvm-sh/nvm).
+#
+# ------------------------------------------------------------------------------
+# Authors
+# -------
+#
+#  * Blake Cerecero (https://github.com/Blake-C)
+#
+# ------------------------------------------------------------------------------
+
+_nvm() {
+  local curcontext='$curcontext' state line cmds ret=1
+  integer NORMARG
+  typeset -A opt_args
+
+  global_args=('--no-colors')
+
+  _arguments -C \
+    '(--*)'{--version,--version}'[Show nvm version.]' \
+    '(- *)'{-h,--help}'[Show help guide.]' \
+    '1: :->cmds' \
+    '*::arg:->args' \
+  && ret=0
+
+case $state in
+  cmds)
+    _values 'nvm command' \
+    '(- *)help[show help]' \
+    '(- *)--version[print out the latest released version of nvm]' \
+    'install[Download and install a <version>. Uses .nvmrc if available and version is omitted.]' \
+    'uninstall[Uninstall a version]' \
+    'use[Modify PATH to use <version>. Uses .nvmrc if available and version is omitted.]' \
+    'exec[Run <command> on <version>. Uses .nvmrc if available and version is omitted.]' \
+    'run[Run `node` on <version> with <args> as arguments. Uses .nvmrc if available and version is omitted.]' \
+    'current[Display currently activated version of Node]' \
+    'ls[List installed versions, matching a given <version> if provided]' \
+    '(list-remote)'{ls-remote,list-remote}'[List remote versions available for install, matching a given <version> if provided]' \
+    'version[Resolve the given description to a single local version]' \
+    'version-remote[Resolve the given description to a single remote version]' \
+    'deactivate[Undo effects of `nvm` on current shell]' \
+    'alias[Show all aliases beginning with <pattern>]' \
+    'unalias[Deletes the alias named <name>]' \
+    'install-latest-npm[Attempt to upgrade to the latest working `npm` on the current node version]' \
+    'reinstall-packages[Reinstall global `npm` packages contained in <version> to current version]' \
+    'unload[Unload `nvm` from shell]' \
+    'which[Display path to installed node version. Uses .nvmrc if available and version is omitted.]' \
+    'cache[dir | clear]' \
+    'set-colors[Set five text colors using format "yMeBg". Available when supported.]' \
+  && ret=0
+    ;;
+  args)
+    case $line[1] in
+      (install)
+        _values 'options' \
+          'v[The version of node to install]:int:' && ret=0
+        _arguments \
+          '-s[Skip binary download, install from source only.]' \
+          '-b[Skip source download, install from binary only.]' \
+          '--reinstall-packages-from=[When installing, reinstall packages installed in <node|iojs|node version number>]' \
+          '--lts[When installing, only select from LTS (long-term support) versions]' \
+          '--lts=[When installing, only select from versions for a specific LTS line]' \
+          '--skip-default-packages[When installing, skip the default-packages file if it exists]' \
+          '--latest-npm[After installing, attempt to upgrade to the latest working npm on the given node version]' \
+          '--no-progress[Disable the progress bar on any downloads]' \
+          '--alias=[After installing, set the alias specified to the version specified. (same as: nvm alias <name> <version>)]' \
+          '--default[After installing, set default alias to the version specified. (same as: nvm alias default <version>)]' \
+        && ret=0
+        compadd -a global_args
+      ;;
+      (uninstall)
+        _arguments \
+          '--silent[Silences stdout/stderr output]' \
+          '--lts[When listing, only select from LTS (long-term support) versions]' \
+          '--lts=[When listing, only select from versions for a specific LTS line]' \
+        && ret=0
+        compadd -a global_args
+      ;;
+      (exec)
+        _arguments \
+          '--silent[Silences stdout/stderr output]' \
+          '--lts[When listing, only select from LTS (long-term support) versions]' \
+          '--lts=[When listing, only select from versions for a specific LTS line]' \
+        && ret=0
+        compadd -a global_args
+      ;;
+      (run)
+        _arguments \
+          '--silent[Silences stdout/stderr output]' \
+          '--lts[When listing, only select from LTS (long-term support) versions]' \
+          '--lts=[When listing, only select from versions for a specific LTS line]' \
+        && ret=0
+        compadd -a global_args
+      ;;
+      (ls)
+        _arguments \
+          '--no-alias[Suppress `nvm alias` output]' \
+        && ret=0
+        compadd -a global_args
+      ;;
+      (list-remote|ls-remote)
+        _arguments \
+          '--lts[When listing, only select from LTS (long-term support) versions]' \
+          '--lts=[When listing, only select from versions for a specific LTS line]' \
+        && ret=0
+        compadd -a global_args
+      ;;
+      (version-remote)
+        _arguments \
+          '--lts[When listing, only select from LTS (long-term support) versions]' \
+          '--lts=[When listing, only select from versions for a specific LTS line]' \
+        && ret=0
+        compadd -a global_args
+      ;;
+      (deactivate)
+        _arguments \
+          '--silent[Silences stdout/stderr output]' \
+        && ret=0
+        compadd -a global_args
+      ;;
+      (which)
+        _arguments \
+          '--silent[Silences stdout/stderr output]' \
+        && ret=0
+        compadd -a global_args
+      ;;
+      (cache)
+        _values 'options' \
+          'dir[Display path to the cache directory for nvm]' \
+          'clear[Empty cache directory for nvm]' \
+        && ret=0
+        compadd -a global_args
+      ;;
+      (*)
+        _values 'Global options' \
+          '--no-colors[Suppress colored output.]' \
+        ;;
+    esac
+    ;;
+esac
+}
+
+_nvm "$@"
